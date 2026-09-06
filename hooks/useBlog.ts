@@ -11,7 +11,7 @@ import {
   fetchBlogPosts,
   updateBlogCategory,
   updateBlogPost,
-} from "@/api/blog.api";
+} from "@/lib/api/blog.api";
 import { queryKeys } from "@/lib/query-keys";
 
 export function useBlogPosts() {

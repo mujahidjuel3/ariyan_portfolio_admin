@@ -7,7 +7,7 @@ import {
   fetchNavbar,
   updateNavbarItem,
   updateNavbarSettings,
-} from "@/api/navbar.api";
+} from "@/lib/api/navbar.api";
 import { queryKeys } from "@/lib/query-keys";
 
 export function useNavbar() {

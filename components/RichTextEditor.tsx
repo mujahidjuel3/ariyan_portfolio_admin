@@ -5,7 +5,7 @@ import StarterKit from "@tiptap/starter-kit";
 import { Mark, Node as TiptapNode, mergeAttributes } from "@tiptap/core";
 import { useEffect, useRef, useState, type RefObject, type ReactNode } from "react";
 import { Label } from "@/components/ui";
-import { uploadMedia } from "@/api/media.api";
+import { uploadMedia } from "@/lib/api/media.api";
 
 export type ArticleBlock =
   | { type: "h2"; text: string }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createService, deleteService, fetchServices, updateService } from "@/api/services.api";
+import { createService, deleteService, fetchServices, updateService } from "@/lib/api/services.api";
 import { queryKeys } from "@/lib/query-keys";
 
 export function useServices() {

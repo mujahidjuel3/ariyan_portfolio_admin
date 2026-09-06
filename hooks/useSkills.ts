@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createSkill, deleteSkill, fetchSkills, updateSkill } from "@/api/skills.api";
+import { createSkill, deleteSkill, fetchSkills, updateSkill } from "@/lib/api/skills.api";
 import { queryKeys } from "@/lib/query-keys";
 
 export function useSkills() {

@@ -6,7 +6,7 @@ import {
   deleteTestimonial,
   fetchTestimonials,
   updateTestimonial,
-} from "@/api/testimonial.api";
+} from "@/lib/api/testimonial.api";
 import { queryKeys } from "@/lib/query-keys";
 
 export function useTestimonials() {

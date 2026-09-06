@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createStackItem, deleteStackItem, fetchStack, updateStackItem } from "@/api/stack.api";
+import { createStackItem, deleteStackItem, fetchStack, updateStackItem } from "@/lib/api/stack.api";
 import { queryKeys } from "@/lib/query-keys";
 
 export function useStack() {

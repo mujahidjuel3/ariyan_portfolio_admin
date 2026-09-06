@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { deleteMedia, fetchMedia, uploadMedia } from "@/api/media.api";
+import { deleteMedia, fetchMedia, uploadMedia } from "@/lib/api/media.api";
 import { queryKeys } from "@/lib/query-keys";
 
 export function useMedia() {

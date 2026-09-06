@@ -6,7 +6,7 @@ import {
   deleteSocialLink,
   fetchSocialLinks,
   updateSocialLink,
-} from "@/api/social.api";
+} from "@/lib/api/social.api";
 import { queryKeys } from "@/lib/query-keys";
 
 export function useSocialLinks(location?: "hero" | "footer") {

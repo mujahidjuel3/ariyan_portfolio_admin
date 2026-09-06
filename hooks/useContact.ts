@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { fetchContact, updateContact } from "@/api/contact.api";
+import { fetchContact, updateContact } from "@/lib/api/contact.api";
 import { queryKeys } from "@/lib/query-keys";
 
 export function useContact() {

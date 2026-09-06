@@ -9,7 +9,7 @@ import {
   fetchProject,
   fetchProjects,
   updateProject,
-} from "@/api/projects.api";
+} from "@/lib/api/projects.api";
 import { queryKeys } from "@/lib/query-keys";
 
 export function useProjects() {

@@ -6,7 +6,7 @@ import {
   deletePricingPlan,
   fetchPricing,
   updatePricingPlan,
-} from "@/api/pricing.api";
+} from "@/lib/api/pricing.api";
 import { queryKeys } from "@/lib/query-keys";
 
 export function usePricing() {

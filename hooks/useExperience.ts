@@ -7,7 +7,7 @@ import {
   fetchExperience,
   updateExperienceItem,
   updateExperienceMeta,
-} from "@/api/experience.api";
+} from "@/lib/api/experience.api";
 import { queryKeys } from "@/lib/query-keys";
 
 export function useExperience() {

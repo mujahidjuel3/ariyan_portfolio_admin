@@ -5,7 +5,7 @@ import {
   fetchAdminSettings,
   updateSectionVisibility,
   updateSiteSettings,
-} from "@/api/settings.api";
+} from "@/lib/api/settings.api";
 import { queryKeys } from "@/lib/query-keys";
 
 export function useSettings() {

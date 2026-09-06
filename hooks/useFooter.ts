@@ -7,7 +7,7 @@ import {
   fetchFooter,
   updateFooterNavLink,
   updateFooterSettings,
-} from "@/api/footer.api";
+} from "@/lib/api/footer.api";
 import { queryKeys } from "@/lib/query-keys";
 
 export function useFooter() {

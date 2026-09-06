@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { fetchAbout, updateAbout } from "@/api/about.api";
+import { fetchAbout, updateAbout } from "@/lib/api/about.api";
 import { queryKeys } from "@/lib/query-keys";
 
 export function useAbout() {

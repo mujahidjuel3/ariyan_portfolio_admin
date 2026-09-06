@@ -6,7 +6,7 @@ import {
   deleteCertification,
   fetchCertifications,
   updateCertification,
-} from "@/api/certification.api";
+} from "@/lib/api/certification.api";
 import { queryKeys } from "@/lib/query-keys";
 
 export function useCertifications() {
