@@ -1,0 +1,393 @@
+{
+  "site": {
+    "title": "Sha Ariyan — Portfolio",
+    "description": "Portfolio of Sha Ariyan — UI/UX designer and freelance web designer."
+  },
+  "hero": {
+    "greeting": "Hi, I'm",
+    "name": "Sha Ariyan!",
+    "marqueeName": "Sha Ariyan",
+    "profileImage": "/ariyan.jpg",
+    "profileAlt": "Sha Ariyan profile",
+    "ctaText": "Let's Work Together!",
+    "ctaHref": "#contact"
+  },
+  "about": {
+    "heading": "About Me",
+    "text": "Greetings! I'm Sha Ariyan, and I navigate the exciting world of web design, where every pixel serves a purpose. Combining a deep understanding of user experience with a knack for transforming ideas into visually stunning interfaces, I approach each project with a burning passion to craft something truly remarkable."
+  },
+  "navLinks": [
+    {
+      "label": "Home",
+      "href": "/#home"
+    },
+    {
+      "label": "About",
+      "href": "/#about"
+    },
+    {
+      "label": "Stack",
+      "href": "/#stack"
+    },
+    {
+      "label": "Services",
+      "href": "/#services"
+    },
+    {
+      "label": "Projects",
+      "href": "/#projects"
+    },
+    {
+      "label": "Blog",
+      "href": "/blog"
+    },
+    {
+      "label": "Contact",
+      "href": "/#contact"
+    }
+  ],
+  "skills": [
+    "UX/UI Expertise",
+    "HTML5/CSS3 Mastery",
+    "Product Design",
+    "Branding",
+    "Collaborative Team Player"
+  ],
+  "socialLinks": [
+    {
+      "label": "LinkedIn",
+      "href": "https://linkedin.com/",
+      "platform": "linkedin"
+    },
+    {
+      "label": "Figma",
+      "href": "https://www.figma.com/",
+      "platform": "figma"
+    },
+    {
+      "label": "Behance",
+      "href": "https://www.behance.net/",
+      "platform": "behance"
+    },
+    {
+      "label": "Dribbble",
+      "href": "https://dribbble.com/",
+      "platform": "dribbble"
+    }
+  ],
+  "stack": [
+    {
+      "id": "1",
+      "name": "Framer",
+      "description": "Framer revolutionizes my web design workflow. It goes beyond a simple website builder, offering a visual playground where I can craft stunning and interactive websites without getting bogged down in complex code."
+    },
+    {
+      "id": "2",
+      "name": "Figma",
+      "description": "Figma is my collaborative design platform of choice. I utilize it to work seamlessly with team members and clients, facilitating real-time feedback and design iterations."
+    },
+    {
+      "id": "3",
+      "name": "Notion",
+      "description": "Notion helps me keep my projects organized. I use it for project management, task tracking, and as a central hub for documentation."
+    },
+    {
+      "id": "4",
+      "name": "Airtable",
+      "description": "Airtable is my go-to solution for robust data organization with structured databases."
+    },
+    {
+      "id": "5",
+      "name": "Zapier",
+      "description": "Zapier automates workflows and connects my favorite tools seamlessly."
+    },
+    {
+      "id": "6",
+      "name": "HTML",
+      "description": "HTML5 is the backbone of my web design work, ensuring semantically meaningful and accessible structure."
+    },
+    {
+      "id": "7",
+      "name": "CSS",
+      "description": "CSS3 is my styling powerhouse for visually appealing, responsive websites."
+    }
+  ],
+  "services": [
+    {
+      "id": "1",
+      "number": "01",
+      "title": "Website Design & Development",
+      "description": "Transform your vision into a reality with beautiful, user-friendly websites.",
+      "shape": "https://framerusercontent.com/images/nSf6ya4FcQ5iCpFIBAboozmlgzA.png?width=1024&height=1024",
+      "shapeAlt": "Red Pyramid",
+      "rotate": -10
+    },
+    {
+      "id": "2",
+      "number": "02",
+      "title": "Landing Page Design",
+      "description": "High-impact landing pages that convert visitors into leads or customers.",
+      "shape": "https://framerusercontent.com/images/fbDdTEyddMlUKyioryX3T3M3I.png?width=1024&height=1024",
+      "shapeAlt": "Blue Cube",
+      "rotate": 0
+    },
+    {
+      "id": "3",
+      "number": "03",
+      "title": "E-commerce Design",
+      "description": "User-friendly e-commerce websites that showcase products and drive sales.",
+      "shape": "https://framerusercontent.com/images/un1NlasO4xdJ3ogUjNzC5U3NsU.png?width=1024&height=1024",
+      "shapeAlt": "Green Cylinder",
+      "rotate": -15
+    },
+    {
+      "id": "4",
+      "number": "04",
+      "title": "Website Prototyping",
+      "description": "Interactive prototypes with Framer to test user flow before development.",
+      "shape": "https://framerusercontent.com/images/gshDWTLuPfNPn8ZUFpq49jhvIPk.png?width=1024&height=1024",
+      "shapeAlt": "Orange Sphere",
+      "rotate": 0
+    }
+  ],
+  "projects": [
+    {
+      "slug": "artikle-membership-framer-template",
+      "title": "Artikle - Membership Framer Template",
+      "category": "Web Design",
+      "client": "Artikle Studio",
+      "duration": "4 weeks",
+      "image": "https://framerusercontent.com/images/G3aJzgcFG0nJ4pDBy94oGqN6Q.png?scale-down-to=1024&width=4800&height=3600",
+      "heroLayout": "full",
+      "heroBackground": "https://framerusercontent.com/images/G3aJzgcFG0nJ4pDBy94oGqN6Q.png?scale-down-to=1024&width=4800&height=3600",
+      "gallery": [
+        "https://framerusercontent.com/images/G3aJzgcFG0nJ4pDBy94oGqN6Q.png?scale-down-to=1024&width=4800&height=3600"
+      ],
+      "previewHref": "#",
+      "ctaHref": "#contact",
+      "ctaLabel": "Get Template",
+      "summary": "Artikle is a membership-focused Framer template built for creators and communities.",
+      "content": [
+        {
+          "type": "h2",
+          "text": "My Approach"
+        },
+        {
+          "type": "p",
+          "text": "Membership products win when the site proves value before the paywall."
+        }
+      ]
+    },
+    {
+      "slug": "flowpath-ai-automation-template",
+      "title": "Flowpath - AI Automation Template",
+      "category": "Web Design",
+      "client": "Flowpath",
+      "duration": "5 weeks",
+      "image": "https://framerusercontent.com/images/gc9XBt4kBOdzUdF76TenAusXLc.png?scale-down-to=1024&width=4800&height=3600",
+      "gallery": [
+        "https://framerusercontent.com/images/gc9XBt4kBOdzUdF76TenAusXLc.png?scale-down-to=1024&width=4800&height=3600"
+      ],
+      "previewHref": "#",
+      "ctaHref": "#contact",
+      "ctaLabel": "Get Template",
+      "summary": "Flowpath is an AI automation Framer template for product teams.",
+      "content": [
+        {
+          "type": "h2",
+          "text": "My Approach"
+        },
+        {
+          "type": "p",
+          "text": "Automation products sell clarity."
+        }
+      ]
+    }
+  ],
+  "blogPosts": [
+    {
+      "id": "1",
+      "slug": "ux-open-links-in-new-window",
+      "title": "UX Open Links In New Window Guide",
+      "titleAccent": "Open Links",
+      "excerpt": "When and why to open links in a new window — a practical UX guide.",
+      "category": "ux",
+      "categoryLabel": "UX",
+      "author": "Atiqur Rahaman",
+      "readingTime": "6 min read",
+      "date": "Jul 28, 2026",
+      "dateISO": "2026-07-28",
+      "image": "https://cdn.prod.website-files.com/674703d2af36853f65da67e0/6a6c92d81183b11fc036fce9_V01.jpg",
+      "imageAlt": "UX Open Links in New Window"
+    },
+    {
+      "id": "2",
+      "slug": "saas-pricing-page-design-pattern",
+      "title": "SaaS Pricing Page Design Pattern",
+      "titleAccent": "Design Pattern",
+      "excerpt": "Proven pricing page patterns that improve clarity, trust, and conversion.",
+      "category": "product",
+      "categoryLabel": "Product Design",
+      "author": "Abdullah Al Noman",
+      "readingTime": "8 min read",
+      "date": "Jul 22, 2026",
+      "dateISO": "2026-07-22",
+      "image": "https://framerusercontent.com/images/gc9XBt4kBOdzUdF76TenAusXLc.png?scale-down-to=1024&width=4800&height=3600",
+      "imageAlt": "SaaS Pricing Page Design"
+    }
+  ],
+  "blogCategories": [
+    {
+      "id": "all",
+      "label": "Latest Blogs"
+    },
+    {
+      "id": "ai",
+      "label": "AI"
+    },
+    {
+      "id": "design",
+      "label": "Design"
+    },
+    {
+      "id": "ux",
+      "label": "UX"
+    },
+    {
+      "id": "ui",
+      "label": "UI Design"
+    },
+    {
+      "id": "web",
+      "label": "Web Design"
+    },
+    {
+      "id": "framer",
+      "label": "Framer"
+    },
+    {
+      "id": "product",
+      "label": "Product Design"
+    },
+    {
+      "id": "startup",
+      "label": "Startup"
+    }
+  ],
+  "experience": {
+    "cvHref": "#",
+    "items": [
+      {
+        "id": "senior-web-designer",
+        "duration": "2020 – Now",
+        "position": "Senior Web Designer",
+        "company": "Freelance",
+        "description": "Designed and developed 100+ websites for clients across tech, e-commerce, and creative industries.",
+        "hoverImage": "https://framerusercontent.com/images/G3aJzgcFG0nJ4pDBy94oGqN6Q.png?scale-down-to=1024&width=4800&height=3600",
+        "hoverImageAlt": "Senior Web Designer work preview"
+      },
+      {
+        "id": "lead-web-designer",
+        "duration": "2018 – 2020",
+        "position": "Lead Web Designer",
+        "company": "Nova Digital Agency",
+        "description": "Led the design team on client web projects, from discovery to launch.",
+        "hoverImage": "https://framerusercontent.com/images/gc9XBt4kBOdzUdF76TenAusXLc.png?scale-down-to=1024&width=4800&height=3600",
+        "hoverImageAlt": "Lead Web Designer work preview"
+      }
+    ]
+  },
+  "testimonials": [
+    {
+      "id": "1",
+      "name": "Sarah Jones",
+      "role": "Marketing Manager, Green Earth Solar",
+      "quote": "Sha Ariyan's design transformed our website! It's not just gorgeous, but incredibly user-friendly too.",
+      "avatar": "https://framerusercontent.com/images/21y9kg3DMhOUBxbQ3y9CwHNPQO8.png"
+    },
+    {
+      "id": "2",
+      "name": "David Lee",
+      "role": "CEO, Technovation Inc.",
+      "quote": "Working with Sha Ariyan was a dream. He took the time to understand our business and target audience.",
+      "avatar": "https://framerusercontent.com/images/2JNdM2O0RnZg1BcZHNgDWoMrhKA.png"
+    }
+  ],
+  "footer": {
+    "title": "Get in touch",
+    "description": "Whether you're looking to collaborate, start a new project, or simply connect. I'd love to hear from you.",
+    "image": {
+      "src": "https://framerusercontent.com/images/nnErOjBA50ZdgYHlb3VxEnmrwU.jpg",
+      "alt": "Portrait"
+    },
+    "contact": {
+      "phone": "+1 (123) 456-7890",
+      "phoneHref": "tel:+11234567890",
+      "email": "mielucristian@gmail.com",
+      "emailHref": "mailto:mielucristian@gmail.com"
+    },
+    "navLinks": [
+      {
+        "label": "Home",
+        "href": "#home"
+      },
+      {
+        "label": "About",
+        "href": "#about"
+      },
+      {
+        "label": "Projects",
+        "href": "#projects"
+      },
+      {
+        "label": "Contact",
+        "href": "#contact"
+      }
+    ],
+    "socialLinks": [
+      {
+        "label": "Instagram",
+        "href": "https://instagram.com/",
+        "icon": "instagram"
+      },
+      {
+        "label": "LinkedIn",
+        "href": "https://linkedin.com/",
+        "icon": "linkedin"
+      },
+      {
+        "label": "X",
+        "href": "https://x.com/",
+        "icon": "x"
+      }
+    ],
+    "copyright": "© Sha Ariyan. All rights reserved."
+  },
+  "pricingPlans": [
+    {
+      "id": "1",
+      "name": "Essential Plan",
+      "tagline": "Perfect for simple websites, blogs, or landing pages",
+      "price": "$750",
+      "features": [
+        "Website Design & Development (up to 5 pages)",
+        "Mobile-responsive design",
+        "Basic SEO optimization",
+        "Contact form integration"
+      ]
+    },
+    {
+      "id": "2",
+      "name": "Growth Plan",
+      "tagline": "Ideal for growing businesses and e-commerce websites",
+      "price": "$1,200",
+      "featured": true,
+      "features": [
+        "Everything in the Essential Plan",
+        "Custom graphic design elements",
+        "CMS access",
+        "Advanced SEO optimization"
+      ]
+    }
+  ]
+}
