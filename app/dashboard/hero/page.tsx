@@ -3,7 +3,14 @@
 import { useEffect, useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";
-import { Card, Input, LoadingState, PageHeader, SaveBar, Textarea } from "@/components/ui";
+import {
+  Card,
+  Input,
+  LoadingState,
+  PageHeader,
+  SaveBar,
+  Textarea,
+} from "@/components/ui";
 import { FormField, FormMessage } from "@/components/forms/FormField";
 import { ImageUpload } from "@/components/ImageUpload";
 import { MultiImageUpload } from "@/components/MultiImageUpload";
@@ -27,7 +34,9 @@ const schema = z.object({
   backgroundImages: z.array(z.string()).optional(),
   floatingImages: z.array(z.string()).optional(),
   badges: z.string().optional(),
-  statistics: z.array(z.object({ label: z.string(), value: z.string() })).optional(),
+  statistics: z
+    .array(z.object({ label: z.string(), value: z.string() }))
+    .optional(),
 });
 
 type FormValues = z.infer<typeof schema>;
@@ -107,7 +116,9 @@ export default function HeroPage() {
   }
 
   const ctaIcon = form.watch("ctaIcon");
-  const ctaIsCustomImage = Boolean(ctaIcon && (ctaIcon.startsWith("http") || ctaIcon.startsWith("/")));
+  const ctaIsCustomImage = Boolean(
+    ctaIcon && (ctaIcon.startsWith("http") || ctaIcon.startsWith("/")),
+  );
 
   return (
     <div>
@@ -146,7 +157,10 @@ export default function HeroPage() {
         <ImageUpload
           label="Profile Image"
           folder="hero"
-          value={{ url: form.watch("profileImage"), mediaId: form.watch("profileMediaId") }}
+          value={{
+            url: form.watch("profileImage"),
+            mediaId: form.watch("profileMediaId"),
+          }}
           onChange={(v) => {
             form.setValue("profileImage", v.url);
             form.setValue("profileMediaId", v.mediaId);
@@ -183,17 +197,25 @@ export default function HeroPage() {
         </div>
 
         <MultiImageUpload
-          label="Background Images"
-          folder="hero"
-          value={form.watch("backgroundImages") ?? []}
-          onChange={(urls) => form.setValue("backgroundImages", urls)}
-        />
-        <MultiImageUpload
-          label="Floating Images"
+          label="Hover Trail Images"
           folder="hero"
           value={form.watch("floatingImages") ?? []}
           onChange={(urls) => form.setValue("floatingImages", urls)}
         />
+        <p className="text-xs text-slate-500">
+          These images appear when the mouse moves around the hero. Upload 4–10
+          images for the cursor trail.
+        </p>
+        <MultiImageUpload
+          label="Background Images (optional)"
+          folder="hero"
+          value={form.watch("backgroundImages") ?? []}
+          onChange={(urls) => form.setValue("backgroundImages", urls)}
+        />
+        <p className="text-xs text-slate-500">
+          Optional decorative cards that sit behind the hero content when
+          available.
+        </p>
 
         <FormField label="Badges (one per line)">
           <Textarea rows={2} {...form.register("badges")} />
@@ -202,17 +224,31 @@ export default function HeroPage() {
           <p className="text-sm font-medium text-slate-700">Statistics</p>
           {stats.fields.map((field, i) => (
             <div key={field.id} className="grid gap-2 sm:grid-cols-2">
-              <Input {...form.register(`statistics.${i}.label`)} placeholder="Label" />
-              <Input {...form.register(`statistics.${i}.value`)} placeholder="Value" />
+              <Input
+                {...form.register(`statistics.${i}.label`)}
+                placeholder="Label"
+              />
+              <Input
+                {...form.register(`statistics.${i}.value`)}
+                placeholder="Value"
+              />
             </div>
           ))}
-          <button type="button" className="text-sm text-indigo-600" onClick={() => stats.append({ label: "", value: "" })}>
+          <button
+            type="button"
+            className="text-sm text-indigo-600"
+            onClick={() => stats.append({ label: "", value: "" })}
+          >
             + Add statistic
           </button>
         </div>
         <FormMessage message={message} isError={message.includes("Failed")} />
       </Card>
-      <SaveBar onSave={() => void form.handleSubmit(onSubmit)()} saving={update.isPending} message={message} />
+      <SaveBar
+        onSave={() => void form.handleSubmit(onSubmit)()}
+        saving={update.isPending}
+        message={message}
+      />
     </div>
   );
 }

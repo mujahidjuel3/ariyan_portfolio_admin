@@ -10,7 +10,19 @@
     "profileImage": "/ariyan.jpg",
     "profileAlt": "Sha Ariyan profile",
     "ctaText": "Let's Work Together!",
-    "ctaHref": "#contact"
+    "ctaHref": "#contact",
+    "secondaryCtaText": "Dive into Figma Projects",
+    "secondaryCtaHref": "https://www.figma.com/",
+    "floatingImages": [
+      "https://framerusercontent.com/images/G3aJzgcFG0nJ4pDBy94oGqN6Q.png?scale-down-to=1024&width=4800&height=3600",
+      "https://framerusercontent.com/images/gc9XBt4kBOdzUdF76TenAusXLc.png?scale-down-to=1024&width=4800&height=3600",
+      "https://framerusercontent.com/images/IJyQj0yIema8tFABogHMDHcP6M.png?scale-down-to=1024&width=4800&height=3600",
+      "https://framerusercontent.com/images/LAZePzksNGsqwC1vEotMzZH3EdE.png?scale-down-to=1024&width=4800&height=3600"
+    ],
+    "backgroundImages": [
+      "https://framerusercontent.com/images/G3aJzgcFG0nJ4pDBy94oGqN6Q.png?scale-down-to=1024&width=4800&height=3600",
+      "https://framerusercontent.com/images/gc9XBt4kBOdzUdF76TenAusXLc.png?scale-down-to=1024&width=4800&height=3600"
+    ]
   },
   "about": {
     "heading": "About Me",

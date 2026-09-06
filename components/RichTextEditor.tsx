@@ -13,7 +13,7 @@ import {
   Link2,
   Image as ImageIcon,
   Video,
-  Newspaper,
+  Link as LinkIcon,
   Table as TableIcon,
   AlignLeft,
   AlignCenter,
@@ -418,9 +418,10 @@ function EditorShell({
     editor.chain().focus().insertContent({ type: "iframe", attrs: { src: url } }).run();
   }
 
-  function insertNews() {
-    const href = window.prompt("News / article URL") || "";
-    const title = window.prompt("Headline") || "News";
+  function insertLinkEmbed() {
+    const href = window.prompt("Link URL") || "";
+    if (!href) return;
+    const title = window.prompt("Link title") || href;
     const image = window.prompt("Thumbnail image URL (optional)") || "";
     editor
       .chain()
@@ -539,11 +540,11 @@ function EditorShell({
           </button>
           <button
             type="button"
-            onClick={insertNews}
+            onClick={insertLinkEmbed}
             className="inline-flex h-8 items-center gap-1.5 rounded-md border border-slate-200 bg-white px-2.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
           >
-            <Newspaper className="size-3.5" />
-            Embed News
+            <LinkIcon className="size-3.5" />
+            Embed Link
           </button>
           <button
             type="button"
