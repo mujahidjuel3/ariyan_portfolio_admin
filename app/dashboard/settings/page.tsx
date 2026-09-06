@@ -11,12 +11,14 @@ import { zodForm } from "@/helpers/form";
 import { useSettings, useUpdateSectionVisibility, useUpdateSiteSettings } from "@/hooks/useSettings";
 import { useNavbar, useUpdateNavbarSettings } from "@/hooks/useNavbar";
 import { getMutationMessage } from "@/helpers/mutation";
+import { refreshPublicContent } from "@/helpers/revalidate";
 
 const siteSchema = z.object({
   title: z.string().min(1, "Title is required"),
   description: z.string().min(1, "Description is required"),
   favicon: z.string().optional(),
   faviconMediaId: z.string().optional(),
+  frontendTheme: z.enum(["light", "dark"]).default("light"),
 });
 
 const SECTIONS = [
@@ -44,7 +46,13 @@ export default function SettingsPage() {
 
   const form = useForm<z.infer<typeof siteSchema>>({
     ...zodForm(siteSchema),
-    defaultValues: { title: "", description: "", favicon: "", faviconMediaId: "" },
+    defaultValues: {
+      title: "",
+      description: "",
+      favicon: "",
+      faviconMediaId: "",
+      frontendTheme: "light",
+    },
   });
 
   useEffect(() => {
@@ -52,8 +60,9 @@ export default function SettingsPage() {
       form.reset({
         title: data.site.title ?? "",
         description: data.site.description ?? "",
-        favicon: (data.site as { favicon?: string }).favicon ?? "",
-        faviconMediaId: (data.site as { faviconMediaId?: string }).faviconMediaId ?? "",
+        favicon: data.site.favicon ?? "",
+        faviconMediaId: data.site.faviconMediaId ?? "",
+        frontendTheme: data.site.frontendTheme === "dark" ? "dark" : "light",
       });
       setSections(data.sections);
     }
@@ -78,7 +87,8 @@ export default function SettingsPage() {
         logoImage: logo.url,
         logoMediaId: logo.mediaId,
       });
-      setMessage("Saved successfully");
+      await refreshPublicContent();
+      setMessage("Saved successfully — frontend will refresh shortly");
     } catch (err) {
       setMessage(getMutationMessage(err, "Failed to save"));
     }
@@ -88,6 +98,7 @@ export default function SettingsPage() {
     setMessage("");
     try {
       await updateSections.mutateAsync(sections);
+      await refreshPublicContent();
       setMessage("Section visibility saved");
     } catch (err) {
       setMessage(getMutationMessage(err, "Failed to save sections"));
@@ -98,7 +109,7 @@ export default function SettingsPage() {
 
   return (
     <div>
-      <PageHeader title="Site & Branding" description="SEO, logo, favicon, and section visibility." />
+      <PageHeader title="Site & Branding" description="SEO, logo, favicon, frontend theme, and sections." />
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
           <h2 className="mb-4 font-medium">Site Settings</h2>
@@ -108,15 +119,31 @@ export default function SettingsPage() {
             </FormField>
             <FormField label="Meta Description" error={form.formState.errors.description}>
               <HtmlRichTextEditor
-                label=""
                 value={form.watch("description")}
                 onChange={(html) => form.setValue("description", html, { shouldValidate: true })}
                 folder="settings"
                 minHeightClass="min-h-[120px]"
               />
             </FormField>
+            <FormField label="Frontend Theme (portfolio site)">
+              <select
+                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
+                value={form.watch("frontendTheme")}
+                onChange={(e) =>
+                  form.setValue("frontendTheme", e.target.value as "light" | "dark", {
+                    shouldValidate: true,
+                  })
+                }
+              >
+                <option value="light">Light mode</option>
+                <option value="dark">Dark mode</option>
+              </select>
+              <p className="mt-1 text-xs text-slate-500">
+                Controls the public website default theme. Admin panel stays light.
+              </p>
+            </FormField>
             <ImageUpload
-              label="Logo"
+              label="Header Logo"
               folder="navbar"
               value={logo}
               onChange={(v) => setLogo({ url: v.url, mediaId: v.mediaId })}

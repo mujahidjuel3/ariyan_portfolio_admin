@@ -23,13 +23,10 @@ import {
   Settings,
   Mail,
   DatabaseZap,
-  Moon,
-  Sun,
 } from "lucide-react";
 import { useLogout } from "@/hooks/useAuth";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { useAdminTheme } from "@/providers/theme-provider";
 
 const links = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -57,7 +54,6 @@ export function Sidebar() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const logoutMutation = useLogout();
-  const { theme, toggleTheme } = useAdminTheme();
 
   function logout() {
     logoutMutation.mutate(undefined, {
@@ -99,14 +95,6 @@ export function Sidebar() {
       <div className="space-y-1 border-t border-slate-800 p-3">
         <button
           type="button"
-          onClick={toggleTheme}
-          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-white"
-        >
-          {theme === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}
-          {theme === "dark" ? "Light mode" : "Dark mode"}
-        </button>
-        <button
-          type="button"
           onClick={logout}
           className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-white"
         >
@@ -121,7 +109,7 @@ export function Sidebar() {
     <>
       <button
         type="button"
-        className="fixed left-4 top-4 z-50 rounded-lg border border-slate-200 bg-white p-2 shadow md:hidden dark:border-slate-700 dark:bg-slate-900"
+        className="fixed left-4 top-4 z-50 rounded-lg border border-slate-200 bg-white p-2 shadow md:hidden"
         onClick={() => setOpen(true)}
         aria-label="Open menu"
       >

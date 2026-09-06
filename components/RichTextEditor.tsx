@@ -1,11 +1,34 @@
 "use client";
 
-import { useEditor, EditorContent } from "@tiptap/react";
+import { useEditor, EditorContent, type Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { Mark, Node as TiptapNode, mergeAttributes } from "@tiptap/core";
-import { useEffect, useRef, useState, type RefObject, type ReactNode } from "react";
+import { Extension, Mark, Node as TiptapNode, mergeAttributes } from "@tiptap/core";
+import { useEffect, useRef, useState, type ReactNode, type RefObject } from "react";
+import {
+  Bold,
+  Italic,
+  Underline as UnderlineIcon,
+  List,
+  ListOrdered,
+  Link2,
+  Image as ImageIcon,
+  Video,
+  Newspaper,
+  Table as TableIcon,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  AlignJustify,
+  Code2,
+  Maximize2,
+  Minimize2,
+  Undo2,
+  Redo2,
+  Baseline,
+} from "lucide-react";
 import { Label } from "@/components/ui";
 import { uploadMedia } from "@/lib/api/media.api";
+import { getApiErrorMessage } from "@/helpers/api-error";
 
 export type ArticleBlock =
   | { type: "h2"; text: string }
@@ -49,6 +72,48 @@ const CustomLink = Mark.create({
   },
 });
 
+const TextColor = Mark.create({
+  name: "textColor",
+  addAttributes() {
+    return {
+      color: { default: null },
+    };
+  },
+  parseHTML() {
+    return [
+      {
+        style: "color",
+        getAttrs: (value) => (value ? { color: value } : false),
+      },
+    ];
+  },
+  renderHTML({ HTMLAttributes }) {
+    if (!HTMLAttributes.color) return ["span", 0];
+    return ["span", { style: `color: ${HTMLAttributes.color}` }, 0];
+  },
+});
+
+const TextAlign = Extension.create({
+  name: "textAlign",
+  addGlobalAttributes() {
+    return [
+      {
+        types: ["heading", "paragraph"],
+        attributes: {
+          textAlign: {
+            default: "left",
+            parseHTML: (element) => (element as HTMLElement).style.textAlign || "left",
+            renderHTML: (attributes) => {
+              if (!attributes.textAlign || attributes.textAlign === "left") return {};
+              return { style: `text-align: ${attributes.textAlign}` };
+            },
+          },
+        },
+      },
+    ];
+  },
+});
+
 const CustomImage = TiptapNode.create({
   name: "image",
   group: "block",
@@ -64,6 +129,68 @@ const CustomImage = TiptapNode.create({
   },
   renderHTML({ HTMLAttributes }) {
     return ["img", mergeAttributes(HTMLAttributes)];
+  },
+});
+
+const CustomIframe = TiptapNode.create({
+  name: "iframe",
+  group: "block",
+  atom: true,
+  addAttributes() {
+    return {
+      src: { default: null },
+      title: { default: "Embedded media" },
+    };
+  },
+  parseHTML() {
+    return [{ tag: "iframe[src]" }];
+  },
+  renderHTML({ HTMLAttributes }) {
+    return [
+      "iframe",
+      mergeAttributes(HTMLAttributes, {
+        class: "w-full aspect-video rounded-lg border border-slate-200",
+        allowfullscreen: "true",
+      }),
+    ];
+  },
+});
+
+const EmbedCard = TiptapNode.create({
+  name: "embedCard",
+  group: "block",
+  atom: true,
+  addAttributes() {
+    return {
+      href: { default: "" },
+      title: { default: "" },
+      image: { default: "" },
+    };
+  },
+  parseHTML() {
+    return [{ tag: 'div[data-type="embed-card"]' }];
+  },
+  renderHTML({ HTMLAttributes }) {
+    return [
+      "div",
+      mergeAttributes(HTMLAttributes, {
+        "data-type": "embed-card",
+        class: "my-3 flex gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3",
+      }),
+      HTMLAttributes.image
+        ? ["img", { src: HTMLAttributes.image, alt: "", class: "h-16 w-24 rounded object-cover" }]
+        : ["div", { class: "h-16 w-24 rounded bg-slate-200" }],
+      [
+        "a",
+        {
+          href: HTMLAttributes.href || "#",
+          target: "_blank",
+          rel: "noopener noreferrer",
+          class: "font-semibold text-slate-800 underline-offset-2 hover:underline",
+        },
+        HTMLAttributes.title || "Embedded link",
+      ],
+    ];
   },
 });
 
@@ -141,39 +268,6 @@ function htmlToBlocks(html: string): ArticleBlock[] {
   return blocks.length ? blocks : [{ type: "p", text: "" }];
 }
 
-type RichTextEditorProps = {
-  label?: string;
-  value?: ArticleBlock[];
-  onChange: (blocks: ArticleBlock[]) => void;
-};
-
-function ToolbarButton({
-  onClick,
-  active,
-  children,
-  disabled,
-}: {
-  onClick: () => void;
-  active?: boolean;
-  children: ReactNode;
-  disabled?: boolean;
-}) {
-  return (
-    <button
-      type="button"
-      disabled={disabled}
-      onClick={onClick}
-      className={`rounded border px-2 py-1 text-xs disabled:opacity-50 ${
-        active
-          ? "border-indigo-500 bg-indigo-50 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-200"
-          : "border-slate-200 bg-white text-slate-700 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200"
-      }`}
-    >
-      {children}
-    </button>
-  );
-}
-
 function toEditorHtml(raw?: string) {
   const value = (raw ?? "").trim();
   if (!value) return "<p></p>";
@@ -184,126 +278,66 @@ function toEditorHtml(raw?: string) {
     .join("");
 }
 
-function EditorShell({
-  label,
-  editor,
-  uploading,
-  onPickImage,
-  fileRef,
-  minHeightClass = "min-h-[220px]",
+function IconBtn({
+  onClick,
+  active,
+  children,
+  disabled,
+  title,
 }: {
-  label?: string;
-  editor: NonNullable<ReturnType<typeof useEditor>>;
-  uploading: boolean;
-  onPickImage: (file: File | undefined) => void;
-  fileRef: RefObject<HTMLInputElement | null>;
-  minHeightClass?: string;
+  onClick: () => void;
+  active?: boolean;
+  children: ReactNode;
+  disabled?: boolean;
+  title: string;
 }) {
   return (
-    <div className="space-y-2">
-      {label && <Label>{label}</Label>}
-      <div className="flex flex-wrap gap-1.5">
-        <ToolbarButton active={editor.isActive("bold")} onClick={() => editor.chain().focus().toggleBold().run()}>
-          Bold
-        </ToolbarButton>
-        <ToolbarButton active={editor.isActive("italic")} onClick={() => editor.chain().focus().toggleItalic().run()}>
-          Italic
-        </ToolbarButton>
-        <ToolbarButton
-          active={editor.isActive("underline")}
-          onClick={() => editor.chain().focus().toggleMark("underline").run()}
-        >
-          Underline
-        </ToolbarButton>
-        <ToolbarButton active={editor.isActive("strike")} onClick={() => editor.chain().focus().toggleStrike().run()}>
-          Strike
-        </ToolbarButton>
-        <ToolbarButton
-          active={editor.isActive("heading", { level: 2 })}
-          onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-        >
-          H2
-        </ToolbarButton>
-        <ToolbarButton
-          active={editor.isActive("heading", { level: 3 })}
-          onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-        >
-          H3
-        </ToolbarButton>
-        <ToolbarButton
-          active={editor.isActive("bulletList")}
-          onClick={() => editor.chain().focus().toggleBulletList().run()}
-        >
-          Bullet
-        </ToolbarButton>
-        <ToolbarButton
-          active={editor.isActive("orderedList")}
-          onClick={() => editor.chain().focus().toggleOrderedList().run()}
-        >
-          Numbered
-        </ToolbarButton>
-        <ToolbarButton
-          active={editor.isActive("blockquote")}
-          onClick={() => editor.chain().focus().toggleBlockquote().run()}
-        >
-          Quote
-        </ToolbarButton>
-        <ToolbarButton
-          active={editor.isActive("codeBlock")}
-          onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-        >
-          Code
-        </ToolbarButton>
-        <ToolbarButton onClick={() => editor.chain().focus().setHorizontalRule().run()}>HR</ToolbarButton>
-        <ToolbarButton
-          onClick={() => {
-            const href = window.prompt("Link URL");
-            if (!href) {
-              editor.chain().focus().unsetMark("link").run();
-              return;
-            }
-            editor.chain().focus().extendMarkRange("link").setMark("link", { href }).run();
-          }}
-          active={editor.isActive("link")}
-        >
-          Link
-        </ToolbarButton>
-        <ToolbarButton disabled={uploading} onClick={() => fileRef.current?.click()}>
-          {uploading ? "Uploading…" : "Image"}
-        </ToolbarButton>
-        <ToolbarButton onClick={() => editor.chain().focus().undo().run()}>Undo</ToolbarButton>
-        <ToolbarButton onClick={() => editor.chain().focus().redo().run()}>Redo</ToolbarButton>
-        <ToolbarButton onClick={() => editor.chain().focus().clearNodes().unsetAllMarks().run()}>
-          Clear
-        </ToolbarButton>
-      </div>
-      <input
-        ref={fileRef}
-        type="file"
-        accept="image/png,image/jpeg,image/jpg,image/webp,image/gif"
-        className="hidden"
-        onChange={(e) => void onPickImage(e.target.files?.[0])}
-      />
-      <div
-        className={`${minHeightClass} rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm prose prose-sm max-w-none focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/20 dark:border-slate-600 dark:bg-slate-900 dark:prose-invert`}
-      >
-        <EditorContent editor={editor} />
-      </div>
-    </div>
+    <button
+      type="button"
+      title={title}
+      disabled={disabled}
+      onClick={onClick}
+      className={`inline-flex h-8 w-8 items-center justify-center rounded-md border text-slate-700 transition disabled:opacity-40 ${
+        active
+          ? "border-indigo-500 bg-indigo-50 text-indigo-700"
+          : "border-transparent bg-transparent hover:border-slate-200 hover:bg-slate-50"
+      }`}
+    >
+      {children}
+    </button>
   );
 }
 
+function ToolbarDivider() {
+  return <span className="mx-1 hidden h-6 w-px bg-slate-200 sm:block" />;
+}
+
+const editorExtensions = [
+  StarterKit.configure({
+    heading: { levels: [1, 2, 3] },
+  }),
+  Underline,
+  CustomLink,
+  TextColor,
+  TextAlign,
+  CustomImage,
+  CustomIframe,
+  EmbedCard,
+];
+
 async function uploadInlineImage(
   file: File | undefined,
-  editor: ReturnType<typeof useEditor>,
+  editor: Editor | null,
   folder: string,
   setUploading: (v: boolean) => void,
   fileRef: RefObject<HTMLInputElement | null>,
 ) {
   if (!file || !editor) return;
-  const allowed = ["image/png", "image/jpeg", "image/jpg", "image/webp", "image/gif"];
-  if (!allowed.includes(file.type)) {
-    alert("Only PNG, JPG, JPEG, WEBP, GIF allowed");
+  const okType =
+    file.type.startsWith("image/") ||
+    /\.(png|jpe?g|webp|gif|svg|ico)$/i.test(file.name);
+  if (!okType) {
+    alert("Only image files allowed (PNG, JPG, WEBP, GIF, SVG, ICO)");
     return;
   }
   if (file.size > 5 * 1024 * 1024) {
@@ -321,27 +355,296 @@ async function uploadInlineImage(
         attrs: { src: media.url, alt: file.name },
       })
       .run();
-  } catch {
-    alert("Image upload failed");
+  } catch (err) {
+    alert(getApiErrorMessage(err, "Image upload failed"));
   } finally {
     setUploading(false);
     if (fileRef.current) fileRef.current.value = "";
   }
 }
 
+function EditorShell({
+  label,
+  editor,
+  uploading,
+  onPickImage,
+  fileRef,
+  minHeightClass = "min-h-[220px]",
+}: {
+  label?: string;
+  editor: Editor;
+  uploading: boolean;
+  onPickImage: (file: File | undefined) => void;
+  fileRef: RefObject<HTMLInputElement | null>;
+  minHeightClass?: string;
+}) {
+  const [fullscreen, setFullscreen] = useState(false);
+  const [showSource, setShowSource] = useState(false);
+  const [source, setSource] = useState("");
+  const colorRef = useRef<HTMLInputElement>(null);
+
+  function setBlock(value: string) {
+    if (value === "paragraph") editor.chain().focus().setParagraph().run();
+    if (value === "h1") editor.chain().focus().toggleHeading({ level: 1 }).run();
+    if (value === "h2") editor.chain().focus().toggleHeading({ level: 2 }).run();
+    if (value === "h3") editor.chain().focus().toggleHeading({ level: 3 }).run();
+  }
+
+  function currentBlock() {
+    if (editor.isActive("heading", { level: 1 })) return "h1";
+    if (editor.isActive("heading", { level: 2 })) return "h2";
+    if (editor.isActive("heading", { level: 3 })) return "h3";
+    return "paragraph";
+  }
+
+  function openSource() {
+    setSource(editor.getHTML());
+    setShowSource(true);
+  }
+
+  function applySource() {
+    editor.commands.setContent(source || "<p></p>");
+    setShowSource(false);
+  }
+
+  function setAlign(alignment: string) {
+    editor.chain().focus().updateAttributes("paragraph", { textAlign: alignment }).run();
+    editor.chain().focus().updateAttributes("heading", { textAlign: alignment }).run();
+  }
+
+  function insertVideo() {
+    const url = window.prompt("Video embed URL (YouTube/Vimeo/mp4)");
+    if (!url) return;
+    editor.chain().focus().insertContent({ type: "iframe", attrs: { src: url } }).run();
+  }
+
+  function insertNews() {
+    const href = window.prompt("News / article URL") || "";
+    const title = window.prompt("Headline") || "News";
+    const image = window.prompt("Thumbnail image URL (optional)") || "";
+    editor
+      .chain()
+      .focus()
+      .insertContent({
+        type: "embedCard",
+        attrs: { href, title, image },
+      })
+      .run();
+  }
+
+  function insertTable() {
+    editor
+      .chain()
+      .focus()
+      .insertContent(
+        `<table style="width:100%;border-collapse:collapse"><tr><th style="border:1px solid #cbd5e1;padding:6px">Header</th><th style="border:1px solid #cbd5e1;padding:6px">Header</th></tr><tr><td style="border:1px solid #cbd5e1;padding:6px">Cell</td><td style="border:1px solid #cbd5e1;padding:6px">Cell</td></tr></table><p></p>`,
+      )
+      .run();
+  }
+
+  const shell = (
+    <div
+      className={`overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm ${
+        fullscreen ? "fixed inset-4 z-[80] flex flex-col" : ""
+      }`}
+    >
+      {label && !fullscreen ? <div className="border-b border-slate-100 px-3 py-2"><Label className="mb-0">{label}</Label></div> : null}
+
+      <div className="space-y-1.5 border-b border-slate-200 bg-slate-50 px-2 py-2">
+        <div className="flex flex-wrap items-center gap-0.5">
+          <IconBtn title="Undo" onClick={() => editor.chain().focus().undo().run()}>
+            <Undo2 className="size-4" />
+          </IconBtn>
+          <IconBtn title="Redo" onClick={() => editor.chain().focus().redo().run()}>
+            <Redo2 className="size-4" />
+          </IconBtn>
+          <ToolbarDivider />
+          <select
+            className="h-8 rounded-md border border-slate-200 bg-white px-2 text-xs text-slate-700"
+            value={currentBlock()}
+            onChange={(e) => setBlock(e.target.value)}
+          >
+            <option value="paragraph">Paragraph</option>
+            <option value="h1">Heading 1</option>
+            <option value="h2">Heading 2</option>
+            <option value="h3">Heading 3</option>
+          </select>
+          <ToolbarDivider />
+          <IconBtn title="Bold" active={editor.isActive("bold")} onClick={() => editor.chain().focus().toggleBold().run()}>
+            <Bold className="size-4" />
+          </IconBtn>
+          <IconBtn title="Italic" active={editor.isActive("italic")} onClick={() => editor.chain().focus().toggleItalic().run()}>
+            <Italic className="size-4" />
+          </IconBtn>
+          <IconBtn
+            title="Underline"
+            active={editor.isActive("underline")}
+            onClick={() => editor.chain().focus().toggleMark("underline").run()}
+          >
+            <UnderlineIcon className="size-4" />
+          </IconBtn>
+          <div className="relative">
+            <IconBtn title="Text color" onClick={() => colorRef.current?.click()}>
+              <Baseline className="size-4" />
+            </IconBtn>
+            <input
+              ref={colorRef}
+              type="color"
+              className="pointer-events-none absolute inset-0 opacity-0"
+              onChange={(e) =>
+                editor.chain().focus().setMark("textColor", { color: e.target.value }).run()
+              }
+            />
+          </div>
+          <ToolbarDivider />
+          <IconBtn
+            title="Bullet list"
+            active={editor.isActive("bulletList")}
+            onClick={() => editor.chain().focus().toggleBulletList().run()}
+          >
+            <List className="size-4" />
+          </IconBtn>
+          <IconBtn
+            title="Numbered list"
+            active={editor.isActive("orderedList")}
+            onClick={() => editor.chain().focus().toggleOrderedList().run()}
+          >
+            <ListOrdered className="size-4" />
+          </IconBtn>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-0.5">
+          <IconBtn
+            title="Link"
+            active={editor.isActive("link")}
+            onClick={() => {
+              const href = window.prompt("Link URL");
+              if (!href) {
+                editor.chain().focus().unsetMark("link").run();
+                return;
+              }
+              editor.chain().focus().extendMarkRange("link").setMark("link", { href }).run();
+            }}
+          >
+            <Link2 className="size-4" />
+          </IconBtn>
+          <button
+            type="button"
+            disabled={uploading}
+            onClick={() => fileRef.current?.click()}
+            className="inline-flex h-8 items-center gap-1.5 rounded-md border border-slate-200 bg-white px-2.5 text-xs font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+          >
+            <ImageIcon className="size-3.5" />
+            {uploading ? "Uploading…" : "Embed Image"}
+          </button>
+          <button
+            type="button"
+            onClick={insertNews}
+            className="inline-flex h-8 items-center gap-1.5 rounded-md border border-slate-200 bg-white px-2.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
+          >
+            <Newspaper className="size-3.5" />
+            Embed News
+          </button>
+          <button
+            type="button"
+            onClick={insertVideo}
+            className="inline-flex h-8 items-center gap-1.5 rounded-md border border-slate-200 bg-white px-2.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
+          >
+            <Video className="size-3.5" />
+            Embed Video
+          </button>
+          <IconBtn title="Insert table" onClick={insertTable}>
+            <TableIcon className="size-4" />
+          </IconBtn>
+          <ToolbarDivider />
+          <IconBtn title="Align left" onClick={() => setAlign("left")}>
+            <AlignLeft className="size-4" />
+          </IconBtn>
+          <IconBtn title="Align center" onClick={() => setAlign("center")}>
+            <AlignCenter className="size-4" />
+          </IconBtn>
+          <IconBtn title="Align right" onClick={() => setAlign("right")}>
+            <AlignRight className="size-4" />
+          </IconBtn>
+          <IconBtn title="Justify" onClick={() => setAlign("justify")}>
+            <AlignJustify className="size-4" />
+          </IconBtn>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-0.5">
+          <IconBtn title="Source code" active={showSource} onClick={() => (showSource ? setShowSource(false) : openSource())}>
+            <Code2 className="size-4" />
+          </IconBtn>
+          <IconBtn title={fullscreen ? "Exit fullscreen" : "Fullscreen"} onClick={() => setFullscreen((v) => !v)}>
+            {fullscreen ? <Minimize2 className="size-4" /> : <Maximize2 className="size-4" />}
+          </IconBtn>
+        </div>
+      </div>
+
+      <input
+        ref={fileRef}
+        type="file"
+        accept="image/png,image/jpeg,image/jpg,image/webp,image/gif,image/svg+xml,.svg,.ico"
+        className="hidden"
+        onChange={(e) => void onPickImage(e.target.files?.[0])}
+      />
+
+      {showSource ? (
+        <div className={`flex flex-col gap-2 p-3 ${fullscreen ? "flex-1" : minHeightClass}`}>
+          <textarea
+            className="min-h-[180px] flex-1 rounded-lg border border-slate-200 p-3 font-mono text-xs"
+            value={source}
+            onChange={(e) => setSource(e.target.value)}
+          />
+          <div className="flex gap-2">
+            <button type="button" className="rounded-md bg-indigo-600 px-3 py-1.5 text-xs text-white" onClick={applySource}>
+              Apply HTML
+            </button>
+            <button type="button" className="rounded-md border px-3 py-1.5 text-xs" onClick={() => setShowSource(false)}>
+              Cancel
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div
+          className={`${fullscreen ? "flex-1 overflow-auto" : minHeightClass} px-3 py-2 text-sm prose prose-sm max-w-none focus-within:outline-none`}
+        >
+          <EditorContent editor={editor} />
+        </div>
+      )}
+
+      <div className="border-t border-slate-100 px-3 py-1 text-[11px] uppercase tracking-wide text-slate-400">
+        {editor.isActive("heading", { level: 1 })
+          ? "h1"
+          : editor.isActive("heading", { level: 2 })
+            ? "h2"
+            : editor.isActive("heading", { level: 3 })
+              ? "h3"
+              : "p"}
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="space-y-2">
+      {fullscreen ? <div className="fixed inset-0 z-[70] bg-black/40" onClick={() => setFullscreen(false)} /> : null}
+      {shell}
+    </div>
+  );
+}
+
+type RichTextEditorProps = {
+  label?: string;
+  value?: ArticleBlock[];
+  onChange: (blocks: ArticleBlock[]) => void;
+};
+
 export function RichTextEditor({ label, value, onChange }: RichTextEditorProps) {
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
 
   const editor = useEditor({
-    extensions: [
-      StarterKit.configure({
-        heading: { levels: [2, 3] },
-      }),
-      Underline,
-      CustomLink,
-      CustomImage,
-    ],
+    extensions: editorExtensions,
     content: blocksToHtml(value ?? [{ type: "p", text: "" }]),
     immediatelyRender: false,
     onUpdate: ({ editor: ed }) => {
@@ -377,7 +680,6 @@ type HtmlRichTextEditorProps = {
   minHeightClass?: string;
 };
 
-/** TipTap editor that stores HTML strings (for description fields). */
 export function HtmlRichTextEditor({
   label,
   value,
@@ -390,14 +692,7 @@ export function HtmlRichTextEditor({
   const lastEmitted = useRef("");
 
   const editor = useEditor({
-    extensions: [
-      StarterKit.configure({
-        heading: { levels: [2, 3] },
-      }),
-      Underline,
-      CustomLink,
-      CustomImage,
-    ],
+    extensions: editorExtensions,
     content: toEditorHtml(value),
     immediatelyRender: false,
     onUpdate: ({ editor: ed }) => {

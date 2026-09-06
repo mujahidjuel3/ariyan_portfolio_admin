@@ -6,6 +6,7 @@ export type PublicSettings = {
     description: string;
     favicon?: string;
     faviconMediaId?: string;
+    frontendTheme?: "light" | "dark";
   };
   sections: Record<string, boolean>;
 };
@@ -25,6 +26,7 @@ export async function updateSiteSettings(payload: {
   description: string;
   favicon?: string;
   faviconMediaId?: string;
+  frontendTheme?: "light" | "dark";
 }) {
   const { data } = await apiClient.put("/admin/settings", payload);
   return data;

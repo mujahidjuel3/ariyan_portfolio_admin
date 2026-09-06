@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { QueryProvider } from "@/providers/query-provider";
-import { AdminThemeProvider } from "@/providers/theme-provider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -21,18 +20,15 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full`} suppressHydrationWarning>
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem("admin-theme");if(t==="dark"){document.documentElement.classList.add("dark");document.documentElement.setAttribute("data-theme","dark");document.documentElement.style.colorScheme="dark";}}catch(e){}})();`,
-          }}
-        />
-      </head>
-      <body className="min-h-full font-sans">
-        <AdminThemeProvider>
-          <QueryProvider>{children}</QueryProvider>
-        </AdminThemeProvider>
+    <html
+      lang="en"
+      data-theme="light"
+      className={`${geistSans.variable} ${geistMono.variable} h-full`}
+      style={{ colorScheme: "light" }}
+      suppressHydrationWarning
+    >
+      <body className="min-h-full bg-slate-50 font-sans text-slate-900">
+        <QueryProvider>{children}</QueryProvider>
       </body>
     </html>
   );

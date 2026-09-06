@@ -27,8 +27,9 @@ export async function uploadMedia(
   form.append("file", file);
   if (alt) form.append("alt", alt);
   if (folder) form.append("folder", folder);
+
   const { data } = await apiClient.post<MediaAsset>("/admin/media", form, {
-    headers: { "Content-Type": "multipart/form-data" },
+    // Do NOT set Content-Type — axios/browser must attach boundary.
     onUploadProgress: (event) => {
       if (!onProgress || !event.total) return;
       onProgress(Math.round((event.loaded / event.total) * 100));
