@@ -5,11 +5,12 @@ export async function refreshPublicContent() {
   try {
     await clearBackendCache();
   } catch {
-    // ignore — backend may not expose cache layer yet
+    // Backend cache clear is a stub — ignore silently
   }
   try {
     await clearFrontendCache();
-  } catch {
-    // ignore when SITE_REVALIDATE_URL is not configured
+  } catch (err) {
+    // Log so we can debug revalidation failures without breaking the UI
+    console.warn("[refreshPublicContent] Frontend revalidation failed:", err);
   }
 }

@@ -42,9 +42,9 @@ export default function CachePage() {
       />
       <Card className="space-y-4">
         <p className="text-sm text-slate-600 dark:text-slate-300">
-          This triggers a JWT-protected backend cache clear. If{" "}
-          <code className="text-xs">NEXT_PUBLIC_SITE_REVALIDATE_URL</code> is set,
-          the public site ISR cache is also revalidated.
+          This triggers a JWT-protected backend cache clear and immediately
+          revalidates the public site ISR cache so changes appear on the
+          frontend without waiting.
         </p>
         <Button onClick={() => void onClear()} disabled={loading}>
           {loading ? "Clearing…" : "Clear Cache"}
