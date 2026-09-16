@@ -83,10 +83,12 @@ export default function SettingsPage() {
     setMessage("");
     try {
       await updateSite.mutateAsync(values);
-      await updateNavbar.mutateAsync({
-        logoImage: logo.url,
-        logoMediaId: logo.mediaId,
-      });
+      // Only send navbar fields that are actually set — sending undefined
+      // logoMediaId would fail @IsUUID() validation on the backend.
+      const navbarPayload: Parameters<typeof updateNavbar.mutateAsync>[0] = {};
+      if (logo.url !== undefined) navbarPayload.logoImage = logo.url;
+      if (logo.mediaId) navbarPayload.logoMediaId = logo.mediaId;
+      await updateNavbar.mutateAsync(navbarPayload);
       await refreshPublicContent();
       setMessage("Saved successfully — frontend will refresh shortly");
     } catch (err) {
