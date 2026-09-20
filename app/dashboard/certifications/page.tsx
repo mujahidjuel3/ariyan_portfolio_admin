@@ -49,6 +49,13 @@ export default function CertificationsPage() {
               onChange={(e) => setDraft({ ...draft, title: e.target.value })}
             />
           </Field>
+          <Field label="Subtitle (optional — shown as  / text  next to title)">
+            <Input
+              value={draft.subtitle ?? ""}
+              placeholder="e.g. Google, Coursera"
+              onChange={(e) => setDraft({ ...draft, subtitle: e.target.value })}
+            />
+          </Field>
           <Field label="Date / Year">
             <Input
               value={draft.date ?? ""}
@@ -65,6 +72,13 @@ export default function CertificationsPage() {
             <Input
               value={draft.imageAlt ?? ""}
               onChange={(e) => setDraft({ ...draft, imageAlt: e.target.value })}
+            />
+          </Field>
+          <Field label="Credential URL (optional)">
+            <Input
+              value={draft.credentialUrl ?? ""}
+              placeholder="https://..."
+              onChange={(e) => setDraft({ ...draft, credentialUrl: e.target.value })}
             />
           </Field>
           <ImageUpload

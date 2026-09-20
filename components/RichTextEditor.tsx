@@ -445,7 +445,7 @@ function EditorShell({
 
   const shell = (
     <div
-      className={`overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm ${
+      className={`overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-colors focus-within:border-indigo-400 focus-within:shadow-[0_0_0_3px_rgba(99,102,241,0.12)] ${
         fullscreen ? "fixed inset-4 z-[80] flex flex-col" : ""
       }`}
     >
@@ -608,7 +608,7 @@ function EditorShell({
         </div>
       ) : (
         <div
-          className={`${fullscreen ? "flex-1 overflow-auto" : minHeightClass} px-3 py-2 text-sm prose prose-sm max-w-none focus-within:outline-none`}
+          className={`${fullscreen ? "flex-1 overflow-auto" : minHeightClass} px-3 py-2 text-sm prose prose-sm max-w-none [&_.ProseMirror]:outline-none [&_.ProseMirror]:min-h-[inherit]`}
         >
           <EditorContent editor={editor} />
         </div>
