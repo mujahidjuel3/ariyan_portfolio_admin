@@ -6,6 +6,7 @@ import { Button, Card, Field, Input, LoadingState, PageHeader, Textarea } from "
 import { HtmlRichTextEditor } from "@/components/RichTextEditor";
 import { useCreatePricingPlan, useDeletePricingPlan, usePricing, useUpdatePricingPlan } from "@/hooks/usePricing";
 import type { PricingRecord } from "@/lib/api/pricing.api";
+import { stripEntityMeta } from "@/helpers/payload";
 
 export default function PricingPage() {
   const { data, isLoading } = usePricing();
@@ -19,7 +20,7 @@ export default function PricingPage() {
 
   async function save() {
     const payload = {
-      ...draft,
+      ...stripEntityMeta(draft as Record<string, unknown>),
       features:
         typeof draft.features === "string"
           ? String(draft.features).split("\n").filter(Boolean)

@@ -28,6 +28,7 @@ const SECTIONS = [
   "stack",
   "experience",
   "certifications",
+  "testimonials",
   "projects",
   "blog",
   "contact",

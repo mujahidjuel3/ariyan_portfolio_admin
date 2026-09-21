@@ -7,6 +7,7 @@ import { ImageUpload } from "@/components/ImageUpload";
 import { HtmlRichTextEditor } from "@/components/RichTextEditor";
 import { useCreateTestimonial, useDeleteTestimonial, useTestimonials, useUpdateTestimonial } from "@/hooks/useTestimonials";
 import type { TestimonialRecord } from "@/lib/api/testimonial.api";
+import { omitEmptyUuids, stripEntityMeta } from "@/helpers/payload";
 
 export default function TestimonialsPage() {
   const { data, isLoading } = useTestimonials();
@@ -19,8 +20,11 @@ export default function TestimonialsPage() {
   if (isLoading || !data) return <LoadingState />;
 
   async function save() {
-    if (editing === "new") await create.mutateAsync(draft);
-    else if (editing) await update.mutateAsync({ id: editing.id, payload: draft });
+    const payload = omitEmptyUuids(
+      stripEntityMeta(draft as Record<string, unknown>),
+    );
+    if (editing === "new") await create.mutateAsync(payload);
+    else if (editing) await update.mutateAsync({ id: editing.id, payload });
     setEditing(null);
   }
 

@@ -16,6 +16,7 @@ import {
 } from "@/hooks/useProjects";
 import type { ProjectRecord } from "@/lib/api/projects.api";
 import { slugify } from "@/lib/utils";
+import { omitEmptyUuids, stripEntityMeta } from "@/helpers/payload";
 
 type DraftState = Partial<ProjectRecord> & { coverMediaId?: string };
 
@@ -55,27 +56,30 @@ export default function ProjectsPage() {
   if (isLoading || !data) return <LoadingState />;
 
   async function save() {
-    const payload = {
-      ...draft,
-      slug: draft.slug || slugify(draft.title ?? ""),
-      title: draft.title ?? "",
-      category: draft.category ?? "",
-      client: draft.client ?? "",
-      duration: draft.duration ?? "",
-      image: draft.image ?? "",
-      previewHref: draft.previewHref ?? "#",
-      ctaHref: draft.ctaHref ?? "#contact",
-      ctaLabel: draft.ctaLabel ?? "View Project",
-      summary: draft.summary ?? "",
-      content: contentBlocks as ProjectRecord["content"],
-      technologies: draft.technologies ?? [],
-      githubUrl: draft.githubUrl,
-      liveUrl: draft.liveUrl,
-      featured: draft.featured,
-      coverMediaId: draft.coverMediaId,
-      heroLayout: draft.heroLayout,
-      heroBackground: draft.heroBackground,
-    };
+    const cleaned = omitEmptyUuids(
+      stripEntityMeta({
+        ...draft,
+        slug: draft.slug || slugify(draft.title ?? ""),
+        title: draft.title ?? "",
+        category: draft.category ?? "",
+        client: draft.client ?? "",
+        duration: draft.duration ?? "",
+        image: draft.image ?? "",
+        previewHref: draft.previewHref ?? "#",
+        ctaHref: draft.ctaHref ?? "#contact",
+        ctaLabel: draft.ctaLabel ?? "View Project",
+        summary: draft.summary ?? "",
+        content: contentBlocks as ProjectRecord["content"],
+        technologies: draft.technologies ?? [],
+        githubUrl: draft.githubUrl,
+        liveUrl: draft.liveUrl,
+        featured: draft.featured,
+        coverMediaId: draft.coverMediaId,
+        heroLayout: draft.heroLayout,
+        heroBackground: draft.heroBackground,
+      } as Record<string, unknown>),
+    );
+    const payload = cleaned as unknown as Parameters<typeof create.mutateAsync>[0];
     if (editingId === "new") {
       await create.mutateAsync(payload);
     } else if (editingId) {

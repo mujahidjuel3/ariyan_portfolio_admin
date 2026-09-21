@@ -13,6 +13,7 @@ import {
   useUpdateExperienceMeta,
 } from "@/hooks/useExperience";
 import type { ExperienceRecord } from "@/lib/api/experience.api";
+import { omitEmptyUuids, stripEntityMeta } from "@/helpers/payload";
 
 export default function ExperiencePage() {
   const { data, isLoading } = useExperience();
@@ -37,8 +38,11 @@ export default function ExperiencePage() {
   }
 
   async function saveItem() {
-    if (editing === "new") await create.mutateAsync(draft);
-    else if (editing) await update.mutateAsync({ id: editing.id, payload: draft });
+    const payload = omitEmptyUuids(
+      stripEntityMeta(draft as Record<string, unknown>),
+    );
+    if (editing === "new") await create.mutateAsync(payload);
+    else if (editing) await update.mutateAsync({ id: editing.id, payload });
     setEditing(null);
   }
 

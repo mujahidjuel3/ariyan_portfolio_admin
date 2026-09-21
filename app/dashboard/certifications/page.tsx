@@ -12,6 +12,7 @@ import {
   useUpdateCertification,
 } from "@/hooks/useCertifications";
 import type { CertificationRecord } from "@/lib/api/certification.api";
+import { omitEmptyUuids, stripEntityMeta } from "@/helpers/payload";
 
 export default function CertificationsPage() {
   const { data, isLoading } = useCertifications();
@@ -26,8 +27,11 @@ export default function CertificationsPage() {
   if (isLoading || !data) return <LoadingState />;
 
   async function save() {
-    if (editing === "new") await create.mutateAsync(draft);
-    else if (editing) await update.mutateAsync({ id: editing.id, payload: draft });
+    const payload = omitEmptyUuids(
+      stripEntityMeta(draft as Record<string, unknown>),
+    );
+    if (editing === "new") await create.mutateAsync(payload);
+    else if (editing) await update.mutateAsync({ id: editing.id, payload });
     setEditing(null);
   }
 

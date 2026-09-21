@@ -17,6 +17,7 @@ import {
   useUpdateBlogPost,
 } from "@/hooks/useBlog";
 import { slugify } from "@/lib/utils";
+import { omitEmptyUuids, stripEntityMeta } from "@/helpers/payload";
 
 type DraftState = {
   title: string;
@@ -82,12 +83,14 @@ export default function BlogsPage() {
   async function save() {
     const slug = draft.slug || slugify(draft.title);
     const article = blocksToArticle(blocks, { slug, author: draft.author });
-    const payload = {
-      ...draft,
-      slug,
-      article,
-      imageMediaId: draft.imageMediaId || undefined,
-    };
+    const payload = omitEmptyUuids(
+      stripEntityMeta({
+        ...draft,
+        slug,
+        article,
+        imageMediaId: draft.imageMediaId || undefined,
+      } as Record<string, unknown>),
+    ) as unknown as Parameters<typeof create.mutateAsync>[0];
     if (editingId === "new") {
       await create.mutateAsync(payload);
     } else if (editingId) {

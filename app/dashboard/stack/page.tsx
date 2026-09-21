@@ -7,6 +7,7 @@ import { ImageUpload } from "@/components/ImageUpload";
 import { HtmlRichTextEditor } from "@/components/RichTextEditor";
 import { useCreateStackItem, useDeleteStackItem, useStack, useUpdateStackItem } from "@/hooks/useStack";
 import type { StackRecord } from "@/lib/api/stack.api";
+import { omitEmptyUuids, stripEntityMeta } from "@/helpers/payload";
 
 export default function StackPage() {
   const { data, isLoading } = useStack();
@@ -20,8 +21,11 @@ export default function StackPage() {
 
   async function save() {
     if (!draft.name) return;
-    if (editing === "new") await create.mutateAsync(draft);
-    else if (editing) await update.mutateAsync({ id: editing.id, payload: draft });
+    const payload = omitEmptyUuids(
+      stripEntityMeta(draft as Record<string, unknown>),
+    );
+    if (editing === "new") await create.mutateAsync(payload);
+    else if (editing) await update.mutateAsync({ id: editing.id, payload });
     setEditing(null);
   }
 

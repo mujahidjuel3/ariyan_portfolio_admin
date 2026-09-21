@@ -7,6 +7,7 @@ import { ImageUpload } from "@/components/ImageUpload";
 import { HtmlRichTextEditor } from "@/components/RichTextEditor";
 import { useCreateService, useDeleteService, useServices, useUpdateService } from "@/hooks/useServices";
 import type { ServiceRecord } from "@/lib/api/services.api";
+import { omitEmptyUuids, stripEntityMeta } from "@/helpers/payload";
 
 const empty = (): Partial<ServiceRecord> => ({
   number: "01", title: "", description: "", shapeImage: "", shapeAlt: "", status: "published",
@@ -24,10 +25,13 @@ export default function ServicesPage() {
 
   async function save() {
     if (!draft.title || !draft.description) return;
+    const payload = omitEmptyUuids(
+      stripEntityMeta(draft as Record<string, unknown>),
+    );
     if (editing === "new") {
-      await create.mutateAsync(draft);
+      await create.mutateAsync(payload);
     } else if (editing) {
-      await update.mutateAsync({ id: editing.id, payload: draft });
+      await update.mutateAsync({ id: editing.id, payload });
     }
     setEditing(null);
   }
