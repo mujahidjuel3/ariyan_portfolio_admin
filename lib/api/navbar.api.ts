@@ -12,6 +12,7 @@ export type NavbarItem = {
   id: string;
   label: string;
   href: string;
+  placement?: "main" | "utility";
   sortOrder: number;
   status: string;
 };
@@ -26,17 +27,34 @@ export async function fetchNavbar() {
   return data;
 }
 
-export async function updateNavbarSettings(payload: Partial<NavbarSettings> & { logoMediaId?: string }) {
+export async function updateNavbarSettings(
+  payload: Partial<NavbarSettings> & { logoMediaId?: string },
+) {
   const { data } = await apiClient.put("/admin/navbar/settings", payload);
   return data;
 }
 
-export async function createNavbarItem(payload: { label: string; href: string; sortOrder?: number; status?: string }) {
+export async function createNavbarItem(payload: {
+  label: string;
+  href: string;
+  placement?: "main" | "utility";
+  sortOrder?: number;
+  status?: string;
+}) {
   const { data } = await apiClient.post("/admin/navbar/items", payload);
   return data;
 }
 
-export async function updateNavbarItem(id: string, payload: { label: string; href: string; sortOrder?: number; status?: string }) {
+export async function updateNavbarItem(
+  id: string,
+  payload: Partial<{
+    label: string;
+    href: string;
+    placement: "main" | "utility";
+    sortOrder: number;
+    status: string;
+  }>,
+) {
   const { data } = await apiClient.put(`/admin/navbar/items/${id}`, payload);
   return data;
 }

@@ -33,7 +33,7 @@ const links = [
   { href: "/dashboard/settings", label: "Site & Branding", icon: Settings },
   { href: "/dashboard/hero", label: "Hero", icon: Sparkles },
   { href: "/dashboard/about", label: "About", icon: User },
-  { href: "/dashboard/navbar", label: "Navbar", icon: Link2 },
+  { href: "/dashboard/navbar", label: "Navbar & Menus", icon: Link2 },
   { href: "/dashboard/skills", label: "Skills", icon: Layers },
   { href: "/dashboard/stack", label: "Stack", icon: Layers },
   { href: "/dashboard/services", label: "Services", icon: Briefcase },
@@ -45,7 +45,7 @@ const links = [
   { href: "/dashboard/footer", label: "Footer", icon: Footprints },
   { href: "/dashboard/contact", label: "Contact", icon: Mail },
   { href: "/dashboard/pricing", label: "Pricing", icon: CreditCard },
-  { href: "/dashboard/social-links", label: "Social Links", icon: Share2 },
+  { href: "/dashboard/social-links", label: "Hero/Footer Socials", icon: Share2 },
   { href: "/dashboard/cache", label: "Cache", icon: DatabaseZap },
 ];
 

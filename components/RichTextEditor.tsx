@@ -227,25 +227,33 @@ function htmlToBlocks(html: string): ArticleBlock[] {
   const doc = new DOMParser().parseFromString(html, "text/html");
   const blocks: ArticleBlock[] = [];
 
+  function liText(li: Element) {
+    // TipTap wraps list item content in <p>; keep readable text without nested tags noise
+    const p = li.querySelector(":scope > p");
+    return (p?.textContent ?? li.textContent)?.trim() ?? "";
+  }
+
   doc.body.childNodes.forEach((node) => {
     if (node.nodeType !== Node.ELEMENT_NODE) return;
     const el = node as HTMLElement;
     const tag = el.tagName.toLowerCase();
 
-    if (tag === "h2") blocks.push({ type: "h2", text: el.textContent?.trim() ?? "" });
-    else if (tag === "h3") blocks.push({ type: "h3", text: el.textContent?.trim() ?? "" });
+    if (tag === "h1" || tag === "h2")
+      blocks.push({ type: "h2", text: el.textContent?.trim() ?? "" });
+    else if (tag === "h3")
+      blocks.push({ type: "h3", text: el.textContent?.trim() ?? "" });
     else if (tag === "blockquote")
       blocks.push({ type: "blockquote", text: el.textContent?.trim() ?? "" });
     else if (tag === "ul") {
-      blocks.push({
-        type: "ul",
-        items: Array.from(el.querySelectorAll("li")).map((li) => li.textContent?.trim() ?? ""),
-      });
+      const items = Array.from(el.querySelectorAll(":scope > li"))
+        .map(liText)
+        .filter(Boolean);
+      if (items.length) blocks.push({ type: "ul", items });
     } else if (tag === "ol") {
-      blocks.push({
-        type: "ol",
-        items: Array.from(el.querySelectorAll("li")).map((li) => li.textContent?.trim() ?? ""),
-      });
+      const items = Array.from(el.querySelectorAll(":scope > li"))
+        .map(liText)
+        .filter(Boolean);
+      if (items.length) blocks.push({ type: "ol", items });
     } else if (tag === "img") {
       blocks.push({
         type: "image",
@@ -258,7 +266,29 @@ function htmlToBlocks(html: string): ArticleBlock[] {
       blocks.push({ type: "divider" });
     } else if (tag === "p") {
       const text = el.textContent?.trim() ?? "";
-      if (text) blocks.push({ type: "p", text });
+      // Keep empty paragraphs so caret/spacing isn't lost mid-edit
+      blocks.push({ type: "p", text });
+    } else if (tag === "div") {
+      // Flatten tip-tap wrappers without dropping nested lists
+      el.childNodes.forEach((child) => {
+        if (child.nodeType !== Node.ELEMENT_NODE) return;
+        const childEl = child as HTMLElement;
+        const childTag = childEl.tagName.toLowerCase();
+        if (childTag === "ul") {
+          const items = Array.from(childEl.querySelectorAll(":scope > li"))
+            .map(liText)
+            .filter(Boolean);
+          if (items.length) blocks.push({ type: "ul", items });
+        } else if (childTag === "ol") {
+          const items = Array.from(childEl.querySelectorAll(":scope > li"))
+            .map(liText)
+            .filter(Boolean);
+          if (items.length) blocks.push({ type: "ol", items });
+        } else {
+          const text = childEl.textContent?.trim() ?? "";
+          if (text) blocks.push({ type: "p", text });
+        }
+      });
     } else {
       const text = el.textContent?.trim() ?? "";
       if (text) blocks.push({ type: "p", text });
@@ -296,6 +326,7 @@ function IconBtn({
       type="button"
       title={title}
       disabled={disabled}
+      onMouseDown={(e) => e.preventDefault()}
       onClick={onClick}
       className={`inline-flex h-8 w-8 items-center justify-center rounded-md border text-slate-700 transition disabled:opacity-40 ${
         active
@@ -643,21 +674,29 @@ type RichTextEditorProps = {
 export function RichTextEditor({ label, value, onChange }: RichTextEditorProps) {
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  /** Prevents setContent loops that break bullet/ordered lists mid-edit */
+  const skipSync = useRef(false);
 
   const editor = useEditor({
     extensions: editorExtensions,
     content: blocksToHtml(value ?? [{ type: "p", text: "" }]),
     immediatelyRender: false,
     onUpdate: ({ editor: ed }) => {
+      skipSync.current = true;
       onChange(htmlToBlocks(ed.getHTML()));
     },
   });
 
   useEffect(() => {
     if (!editor || !value) return;
-    const current = editor.getHTML();
+    if (skipSync.current) {
+      skipSync.current = false;
+      return;
+    }
     const next = blocksToHtml(value);
-    if (current !== next) editor.commands.setContent(next);
+    // Avoid clobbering live TipTap list markup with a round-tripped rewrite
+    if (editor.getHTML() === next) return;
+    editor.commands.setContent(next, { emitUpdate: false });
   }, [editor, value]);
 
   if (!editor) return null;

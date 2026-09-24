@@ -9,6 +9,7 @@ export type PublicSettings = {
     frontendTheme?: "light" | "dark";
   };
   sections: Record<string, boolean>;
+  order?: string[];
 };
 
 export async function fetchSettings() {
@@ -32,7 +33,10 @@ export async function updateSiteSettings(payload: {
   return data;
 }
 
-export async function updateSectionVisibility(sections: Record<string, boolean>) {
-  const { data } = await apiClient.put("/admin/settings/sections", { sections });
+export async function updateSectionVisibility(payload: {
+  sections: Record<string, boolean>;
+  order?: string[];
+}) {
+  const { data } = await apiClient.put("/admin/settings/sections", payload);
   return data;
 }

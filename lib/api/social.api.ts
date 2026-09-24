@@ -5,6 +5,8 @@ export type SocialLinkRecord = {
   label: string;
   href: string;
   platform: string;
+  iconUrl?: string;
+  iconMediaId?: string;
   location: "hero" | "footer";
   sortOrder: number;
   status: string;
@@ -20,7 +22,9 @@ export async function fetchSocialLinks(location?: "hero" | "footer") {
 export async function createSocialLink(payload: {
   label: string;
   href: string;
-  platform: string;
+  platform?: string;
+  iconUrl?: string;
+  iconMediaId?: string;
   location?: "hero" | "footer";
   sortOrder?: number;
   status?: string;
@@ -29,7 +33,15 @@ export async function createSocialLink(payload: {
   return data;
 }
 
-export async function updateSocialLink(id: string, payload: Partial<SocialLinkRecord>) {
+export async function updateSocialLink(
+  id: string,
+  payload: Partial<
+    Pick<
+      SocialLinkRecord,
+      "label" | "href" | "platform" | "iconUrl" | "iconMediaId" | "location" | "sortOrder" | "status"
+    >
+  >,
+) {
   const { data } = await apiClient.put(`/admin/social-links/${id}`, payload);
   return data;
 }
